@@ -1,0 +1,37 @@
+*{
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    border: 0;
+}
+ body{
+    height: 100vh;
+    font-family:  Arial, Helvetica, sans-serif;
+    display: grid;
+    place-items: center;
+}
+ h1{
+    margin-bottom: 2rem;
+
+}
+ form{
+    display: flex;
+    flex-direction: column;
+    width: 24rem;
+    gap: 1rem;
+}
+ input,
+ select {
+    padding: 1.4rem;
+    background: transparent;
+    border: 1px solid black;
+    
+}
+ 
+ button{
+    width: 8rem;
+    padding: 1.4rem;
+    cursor: pointer;
+    background: #673de6;
+    color: white;
+}
