@@ -1,0 +1,306 @@
+#include <iostream>
+#include <string.h>
+using namespace std;
+
+struct node
+{
+    int prn, rollno;
+    char name[50];
+    struct node *next;
+};
+class info
+{
+    node *sample_node = NULL, *head1 = NULL, *temp1 = NULL, *head2 = NULL, *temp2 = NULL,*head = NULL, *temp = NULL;
+    int val_prn, val_roll,count_mem,sflag=1;
+    char val_name[20];
+
+public:
+    node *create();
+    void insertp();
+    void inserts();
+    void insertm();
+    void delm();
+    void delp();
+    void dels();
+    void display();
+    void count();
+    void reverse();
+    void rev(node *p);
+    void concat();
+};
+node *info::create()
+{
+    node *new_node = new (struct node);
+    cout << "Enter name of student: ";
+    cin >> val_name;
+    strcpy(new_node->name, val_name);
+    cout << "\nEnter prn no. of student:";
+    cin >> val_prn;
+    new_node->prn = val_prn;
+    cout << "Enter student rollno: ";
+    cin >> val_roll;
+    new_node->rollno = val_roll;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void info::insertm()
+{
+    node *new_node = create();
+    int key;
+
+    if (head == NULL)
+    {
+        head = new_node;
+    }
+    else
+    {
+        cout << "\nEnter the roll number after which you want to insert new member \n";
+        cin >> key;
+        temp = head;
+        do
+        {
+            if(temp->rollno == key)
+            {
+                new_node->next = temp->next;
+                temp->next = new_node;
+                break;
+            }
+            else
+            {
+                temp = temp->next;
+            }
+
+        }
+        while (temp->next != NULL);
+        if (temp->next == NULL && sflag==1)
+        {
+            new_node->next = temp->next;
+            temp->next = new_node;
+        }
+
+    }
+
+}
+
+void info::inserts()
+{
+    node *new_node = create();
+
+    if (head == NULL)
+    {
+        head = new_node;
+    }
+    else
+    {
+        temp = head;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+    sflag=0;
+}
+void info::insertp()
+{
+    node *new_node = create();
+
+    if (head == NULL)
+    {
+        head = new_node;
+    }
+    else
+    {
+        temp = head;
+        head = new_node;
+        head->next = temp->next;
+    }
+}
+
+void info::display()
+{
+    if (head == NULL)
+    {
+        cout << "linklist is empty";
+    }
+    else
+    {
+        temp = head;
+        cout << "prn	rollno	NAME	\n";
+        do
+        {
+
+            cout << "	\n"<< temp->prn << "	" << temp->rollno << "	" << temp->name;
+            temp = temp->next;
+            cout<<temp;
+        }while (temp->next != NULL);
+        cout << "	\n" << temp->prn << "	" << temp->rollno << "	" << temp->name;
+    }
+}
+void info::delm()
+{
+    int del_mem, flag = 0;
+    cout << "\n Enter the prn no. of student whose data you want to delete: ";
+    cin >> del_mem;
+    temp = head;
+    if(head->prn==del_mem){
+        head=head->next;
+        delete(temp);
+        return;
+    }
+    while (temp->next != NULL)
+    {
+        if (temp->prn == del_mem)
+        {
+            sample_node->next = temp->next;
+            delete (temp);
+            flag = 1;
+        }
+        else{
+            sample_node = temp;
+            temp = temp->next;
+        }
+    }
+    if (flag == 0)
+    {
+        cout << "\nSorry memeber not deleted.";
+    }
+}
+void info::delp()
+{
+    temp = head;
+    head = head->next;
+    delete (temp);
+}
+void info::dels()
+{
+    temp = head;
+    if(head->next==NULL){
+        head=head->next;
+        delete(temp);
+        return;
+    }
+    while (temp->next != NULL)
+    {
+        sample_node = temp;
+        temp = temp->next;
+    }
+    sample_node->next = NULL;
+    delete (temp);
+}
+void info::count()
+{
+    temp = head;
+    count_mem = 0;
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+        count_mem++;
+    }
+    count_mem++;
+    cout << "Count of members is: " << count_mem;
+}
+
+void info::concat()
+{
+    int i,k, j;
+    cout << "Enter no. of members in list1: ";
+    cin >> k;
+    head = NULL;
+    for (i = 0; i < k; i++)
+    {
+        inserts();
+        head1 = head;
+    }
+    head = NULL;
+    cout << "Enter no. of members in list2: ";
+
+    cin >> j;
+    for (i = 0; i < j; i++)
+    {
+        inserts();
+        head2 = head;
+    }
+    head = NULL;
+
+    temp1 = head1;
+    while (temp1->next != NULL)
+    {
+        temp1 = temp1->next;
+    }
+    temp1->next = head2;
+
+    temp2 = head1;
+    cout << "	prn	rolln0	NAME	\n";
+    while (temp2->next != NULL)
+    {
+        cout << "\n	" << temp2->prn << "	" << temp2->rollno << "	" << temp2->name << "\n";
+        ;
+        temp2 = temp2->next;
+    }
+    cout << "\n	" << temp2->prn << "	" << temp2->rollno << "	" << temp2->name << "\n";
+}
+int main()
+{
+    info sample_node;
+    int num_ch;
+
+    char ch;
+    do
+    {
+        cout << "\n Choice the options ";
+        cout << "\n 1. To insert president ";
+        cout << "\n 2. To insert member ";
+        cout << "\n 3. To insert secretary ";
+        cout << "\n 4. To delete president ";
+        cout << "\n 5. To delete member ";
+        cout << "\n 6. To delete secretary ";
+        cout << "\n 7. Count of members ";
+        cout << "\n 8. To display data ";
+        cout << "\n 9.To concatenate two strings ";
+        cout<<"\nEnter your choice       :";
+        cin >> num_ch;
+        switch (num_ch)
+        {
+        case 1:
+            sample_node.insertp();
+            break;
+        case 2:
+            sample_node.insertm();
+            break;
+        case 3:
+            sample_node.inserts();
+            break;
+        case 4:
+            sample_node.delp();
+            break;
+        case 5:
+            sample_node.delm();
+            break;
+        case 6:
+            sample_node.dels();
+            break;
+        case 7:
+            sample_node.count();
+            break;
+        case 8:
+            sample_node.display();
+            break;
+        case 9:
+            sample_node.concat();
+
+            break;
+        default:
+            cout << "\n unknown choice";
+        }
+        cout << "\nDo you want to continue ?(y/Y) \n";
+        cin >> ch;
+
+    }
+    while (ch == 'y' || ch == 'Y');
+    cout<<"********** End OF Programe";
+    return 0;
+}
+
+
