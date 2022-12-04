@@ -1,0 +1,57 @@
+#include <iostream>
+
+using namespace std;
+
+
+
+
+#include<fstream>
+
+
+class person
+{
+public:
+           
+             char name[30];
+             int age;
+             char gender[30];
+public:
+             void getdata();
+             void putdata();
+};
+
+void person::getdata()
+{
+cin>>name;
+cin>>age;
+cin>>gender;
+}
+void person::putdata()
+{
+cout<<"\n"<<name<<"\t"<<age<<"\t"<<gender;
+}
+int main()
+{
+person human[100];
+fstream file;
+int i,n;
+file.open("sample.dat",ios::binary|ios::app|ios::out);
+cout<<"\n how many data of persons you want to store?";
+cin>>n;
+cout<<"Enter the information of a person(name,age,DOB)";
+for(i=0;i<n;i++)
+{
+human[i].getdata();
+file.write((char *)&human[i], sizeof(human[i]));
+}
+file.close();
+file.open("sample dat",ios ::in);
+cout<<"\n information of person is as follows";
+ for(i=0;i<n;i++)
+{
+file.read((char*)&human[i], sizeof(human[i]));
+human[i] .putdata();
+}
+file.close();
+return 0;
+}

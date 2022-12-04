@@ -1,0 +1,118 @@
+#include<iostream>
+using namespace std;
+class publication
+{
+ string title;
+ float price;
+ public:
+ void add()
+ {
+ cout<<"\n Enter Title :: ";
+ cin.ignore();
+ getline(cin,title);
+ cout<<" Enter Price :: ";
+ cin>>price;
+ }
+ void display()
+ {
+ cout<<"\n -------------------------------------------";
+ cout<<"\n Publication :: "<<title;
+ cout<<"\n Price :: "<<price;
+ }
+ };
+ class book : public publication
+ {
+ private:
+ int page_count;
+ public:
+ void add_book()
+ {
+ try
+ {
+ add();
+ cout<<" Enter the page count :: ";
+ cin>>page_count;
+ if(page_count <=0)
+ throw page_count;
+ }catch(int page_count)
+ {
+ cout<<"Invalid page count";
+ this -> page_count=0;
+ }
+ }
+ void display_book()
+ {
+ display();
+ cout<<"\n Page count :: "<<page_count;
+ cout<<"\n -------------------------------------------";
+ }
+ };
+ class tape : public publication
+ {
+ private:
+ float play_time;
+ public:
+ void add_tape()
+ {
+ try
+ {
+ add();
+ cout<<" Enter duration of Tape (in minutes) :: ";
+ cin>>play_time;
+ if(play_time<= 0)
+ throw play_time;
+ }catch(int pay_time)
+ {
+cout<<"\nInvalid tape Duration";
+ this->play_time=0;
+ }
+ }
+ void display_tape()
+ {
+ display();
+ cout<<"\n Duration : "<<play_time<<"min";
+ cout<<"\n -------------------------------------------";
+ }
+ };
+ int main(){
+ book b1[10];
+ tape t1[10];
+ int ch=0,b_count=0,t_count=0;
+ do
+ {
+ cout<<"\n -------Menu------";
+ cout<<"\n 1. Add a Book ";
+ cout<<"\n 2. Add a Record ";
+ cout<<"\n 3. Display a Book ";
+ cout<<"\n 4. Display a Record ";
+ cout<<"\n 5. Exit ";
+ cout<<"\n Enter your choice :: ";
+ cin>>ch;
+ switch(ch)
+ {
+ case 1:
+ b1[b_count].add_book();
+ b_count++;
+ break;
+ case 2:
+ t1[t_count].add_tape();
+ t_count++;
+ break;
+ case 3:
+ cout<<"\n----------Publication Info (Books)---------";
+ for(int j=0; j<b_count;j++)
+ {
+ b1[j].display_book();
+ }
+ break;
+ case 4:
+ cout<<"\n----------- Publication Info (Tapes)--------";
+ for(int j=0; j<t_count;j++)
+ {
+ t1[j].display_tape();
+ }
+ break;
+ }
+ }while (ch != 5);
+ return 0;
+ }

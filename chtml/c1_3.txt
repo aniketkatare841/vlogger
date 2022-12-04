@@ -1,0 +1,207 @@
+// Program to Fill a Polygon Using Scan Line Fill Algorithm in C++.
+
+#include <conio.h>
+#include <iostream>
+#include <graphics.h>
+#include <stdlib.h>
+using namespace std;
+
+class point
+{
+    public:
+    int x,y;
+};
+
+class poly
+{
+        point p[20];    //object of class point , consists of (x,y) of each vertex 
+        int inter[20],x,y;
+        int v,xmin,ymin,xmax,ymax;
+        
+    public:
+        int c;
+        void read();
+        void calcs();
+        void display();
+        void ints(float);
+        void sort(int);
+};
+
+//FUNCTION to accept the vertices of the polygon
+void poly::read()
+{
+    int i;
+    cout<<"\nSCANLINE FILL ALGORITHM\n";
+    
+    while(1)
+  {
+    cout<<"\n Enter the number of vertices of the polygon : ";
+    cin>>v;
+    
+    if(v>2)
+    {
+        for(i=0;i<v; i++) //ACCEPT THE VERTICES
+        {
+            cout<<"\nEnter co-ordinate "<<i+1<<" : ";
+            cout<<"\n\tx"<<(i+1)<<" = ";
+            cin>>p[i].x;  
+            cout<<"\n\ty"<<(i+1)<<" = ";
+            cin>>p[i].y;
+        }
+        p[i].x=p[0].x; //after the array stores all vertices, the 1st vertex is stored again so that the circuit can be completed
+        p[i].y=p[0].y;
+        
+        xmin=xmax=p[0].x; //starting from the 1st vertex
+        ymin=ymax=p[0].y;
+        
+        break;
+    }
+    else
+        cout<<"\nNumber of vertices must be > 2 "; //a triangle is the trivial polygon
+  }
+}
+
+//FUNCTION to find the MAX,MIN vertex i.e. least value of x and y
+void poly::calcs()
+{ 
+    for(int i=0;i<v;i++)
+    {
+        if(xmin>p[i].x)
+        xmin=p[i].x;
+        
+        if(xmax<p[i].x)
+        xmax=p[i].x;
+        
+        if(ymin>p[i].y)
+        ymin=p[i].y;
+        
+        if(ymax<p[i].y)
+        ymax=p[i].y;
+    }
+}
+
+//FUNCTION to display the scanline filling
+void poly::display()
+{
+    int ch1;
+    char ch='y';
+    float s,s2;
+   
+        cout<<"\n\nMENU : ";
+        cout<<"\n\n\t1 . Scan line Fill ";
+        cout<<"\n\n\t2 . Exit ";
+        cout<<"\n\nEnter your choice:";
+        cin>>ch1;
+        
+        switch(ch1)
+        {
+            case 1:
+                s=ymin+0.01;
+                delay(60);    //delay of 60ms i.e. 0.06 seconds
+                
+                cleardevice();
+                while(s<=ymax)   // loop is executed if (ymin != ymax) even if 0.01 difference exists
+                {
+                    ints(s);
+                    sort(s);
+                    s++;
+                }
+                break;
+            case 2:
+                exit(0);
+        }
+
+}
+
+void poly::ints(float z) // to find x coordinate of point of intersection of the scanline with polygon's boundary for same y value
+{
+    int x1,x2,y1,y2,temp;
+    c=0;
+    for(int i=0;i<v;i++)
+    {
+    	//consider { A(x1,y1) ; B(x2,y2) ; C(x3,y3) ; D(x4,y4) }
+		    	
+    	//say A(x1,y1)
+        x1=p[i].x;     
+        y1=p[i].y;
+        
+        //say B(x2,y2)
+        x2=p[i+1].x;
+        y2=p[i+1].y;
+        
+        if(y2<y1)    // i.e. in terms of depth coordinate y; if B is above A then swap their coordinates to start filling from B to A instead of A to B
+        {
+            temp=x1;
+            x1=x2;
+            x2=temp;
+            
+            temp=y1;
+            y1=y2;
+            y2=temp;
+        }
+        
+        if(z>=y1&&z<=y2) // if that point difference exists between y1 and y2 i.e. in height then perform the following
+        {
+            if((y1-y2)==0) //ie and y1==y2 then store x1 in x
+            	x=x1;
+            
+            else // when y1!=y2 : used to make changes in x. so that we can fill our polygon after certain distance
+            {
+                x=((x2-x1)*(z-y1))/(y2-y1); //incrementing x along y1 to y2
+                x=x+x1;
+            }
+            
+            if(x>=xmin && x<=xmax)
+            	inter[c++]=x;
+        }
+    }
+}
+
+void poly::sort(int z) //SORT and FILL FUNCTION
+{
+    int temp,j,i;
+
+        for(i=0;i<v;i++)
+        {
+            line(p[i].x,p[i].y,p[i+1].x,p[i+1].y); // used to make boundaries / edges of the (hollow) polygon
+        }
+        delay(60);
+        for(i=0; i<c;i+=2) // ie. for all x intersections ; increment by 2 to extract pairs of x values
+        {
+            delay(60);
+            line(inter[i],  // from 1st x
+			z,
+			inter[i+1],     // to 2nd x
+			z);  // Used to fill the polygon ....
+        }
+}
+
+int main() //START OF MAIN
+{
+    int cl;
+    initwindow(500,600);    // OR      int gd=DETECT, gm ;      initgraph(&gd,&gm,NULL)
+    poly obj;
+    char ch;
+    do
+    {
+    cleardevice();
+    
+    obj.read(); //accepts vertices
+    obj.calcs();// finds min and max x,y
+    
+    cleardevice();
+    cout<<"\n\tEnter the fill colour (0-15) : "; //Selecting fill colour
+    cin>>cl;
+    setcolor(cl);
+    
+    obj.display();
+    
+    cout<<"Do you want to continue?: ";
+        cin>>ch;
+    }while(ch=='y' || ch=='Y');
+    
+    closegraph(); //CLOSE OF GRAPHICS MODE
+    getch();
+    return 0;
+}
+

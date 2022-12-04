@@ -1,0 +1,225 @@
+/* CG GROUP B ASSIGNMENT 05 : 2D Basic transformations */
+
+#include<iostream>
+#include<math.h>
+#include<graphics.h>
+using namespace std;
+
+class matrix
+{
+public:
+    int n,i,j,tx,ty,k,sum,sx,sy;
+    double a[6][3],poly[6][3],res[6][3];
+    double p,q,ang=0.0,angle=0.0;
+
+    void get()
+       {
+       cout<<"\n Enter the number of vertices of polygon: ";
+       cin>>n;
+       
+       for(i=0;i<n;i++)
+       {
+        cout<<"Enter x and y coordinates of polygon: ";
+
+           cin>>poly[i][0];  //no. of rows of polygon matrix i.e. object matrix = no. of vertices of that polygon
+           cin>>poly[i][1];
+           poly[i][2]=1;
+       }
+
+//display object matrix
+       cout<<"\n Cordinates of polygon are:\n";
+
+       for(i=0;i<n;i++)//no. of rows
+       {
+           for(j=0;j<3;j++)//no. of columns = 3 only
+           {
+               cout<<poly[i][j]<<"\t";
+           }cout<<"\n";
+       }
+       }
+
+void identitymat()
+{
+for(i=0;i<n;i++)
+        {
+            for(j=0;j<3;j++)
+                {
+                    if(i==j)
+                    {
+                        a[i][j]=1;
+                    }
+                    else
+                    {
+                        a[i][j]=0;
+                    }
+                }
+        }
+}
+    void trans()
+    {
+                
+        cout<<"Enter values of tx and ty";
+        cin>>tx>>ty;
+        a[2][0]=tx;
+        a[2][1]=ty;
+        cout<<" Translation matrix is"<<"\n";
+
+        for(i=0;i<n;i++)
+        {
+            for(j=0;j<3;j++)
+            {
+                cout<<a[i][j]<<"\t";
+            }cout<<"\n";
+        }
+     }
+
+
+    void scale()
+    {
+        cout<<"\n Enter the values of sx and sy";
+        cin>>sx>>sy;
+        a[0][0]=sx;
+        a[1][1]=sy;
+       
+    cout<<"\n Scaling Matrix is:"<<"\n";
+
+
+        for(i=0;i<n;i++)
+        {
+                for(j=0;j<3;j++)
+        {
+                        cout<<a[i][j]<<"\t";
+        }cout<<"\n";
+        }
+
+
+    }
+
+    void rot()
+       {
+        cout<<"Enter the angle";
+       cin>>ang;
+
+       angle=(ang*3.142)/180;
+
+       q=sin(angle);
+       p=cos(angle);
+       
+       a[0][0]=p;
+       a[0][1]=q;
+       a[1][0]=-q;
+       a[1][1]=p;
+
+       cout<<" Rotational matrix is"<<"\n";
+       for(i=0;i<n;i++)
+       {
+           for(j=0;j<3;j++)
+           {
+               cout<<a[i][j]<<"\t";
+           }cout<<"\n";
+       }
+       }
+
+    void multi()
+            {
+                cout<<"\n Process of Multiplying two matrices";
+                    for(i=0; i<n; i++)
+                    {
+                        for(j=0; j<3; j++)
+                        {
+                            sum=0;
+                            for(k=0; k<3; k++)
+                            {
+                                sum = sum + poly[i][k] * a[k][j];
+                            }
+                            res[i][j] = sum;
+                        }
+                    }
+            }
+void display()
+       {
+           cout<<"\nMultiplication of two Matrices is : \n";
+             for(i=0; i<n; i++)
+             {
+                 for(j=0; j<3; j++)
+                    {
+                      cout<<res[i][j]<<" ";
+                    }
+               cout<<"\n";
+             }
+
+for(int i=0;i<n-1;i++)
+{
+    line(poly[i][0],poly[i][1],poly[i+1][0],poly[i+1][1]);
+
+}
+line(poly[2][0],poly[2][1],poly[0][0],poly[0][1]);
+
+
+for(int i=0;i<n-1;i++)
+{
+    line(res[i][0],res[i][1],res[i+1][0],res[i+1][1]);
+
+}
+line(res[2][0],res[2][1],res[0][0],res[0][1]);
+delay(5000);
+cleardevice();
+
+            }
+    };
+
+
+int main()
+{
+
+int gd=DETECT,gm;
+initgraph(&gd,&gm,NULL);
+
+    matrix g;
+    int ch;
+    char ans;
+    g.get();
+    g.identitymat();
+do
+    {
+cout<<" Enter your choice: \n1.translation\n2.scaling\n3.rotation: ";
+       
+    cin>>ch;
+    switch(ch)
+    {
+    case 1:
+        
+        g.trans();
+        g.multi();
+        g.display();
+       
+        break;
+        
+    case 2:
+        g.scale();
+        g.multi();
+        g.display();
+        
+        break;
+        
+    case 3:
+        g.rot();
+        g.multi();
+        g.display();
+    
+        break;
+        
+    default:
+    cout<<".....You have entered the wrong choice.....";
+    break;
+       
+    }
+cout<<"Do you want to continue?(y/n)";
+cin>>ans;
+
+    }while(ans=='Y'|| ans=='y');
+    cout<<"***** END  OF  PROGRAM *****";
+getch();
+closegraph();
+
+}

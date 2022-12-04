@@ -1,0 +1,143 @@
+#include<iostream>
+#include<string.h>
+using namespace std;
+class student
+{
+	      char *name,*dob,*blood,*Class,*div,*rollno;
+	      static int count;
+      public:
+	            student();
+                student(student *);
+               ~student();
+	            void putdata();
+                static void showcount()
+                {
+                 cout<<"total number of student : "<<count;
+                }
+	     friend class info;
+};
+class info
+{
+	 char *conno,*drino,*address;
+	 public :
+         info();
+         void getdata(student *s);
+	     void putdata(student *s);
+};
+student:: student()
+{
+	++count;
+               name = new char[20];
+	dob = new char[10];
+	blood = new char[3];
+    Class=new char[3];
+    div=new char[1];
+    rollno=new char[100];
+    strcpy(name,"XYZ");
+	strcpy(dob,"00/00/0000");
+	strcpy(blood,"A +");
+    strcpy(Class,"S.E");
+    strcpy(div,"A");
+    strcpy(rollno,"30");
+}
+student::student(student *s)
+{
+   	strcpy(this->name,s->name);
+   	strcpy(this->dob,s->dob);
+   	strcpy(this->blood,s->blood);
+    strcpy(this->Class,s->Class);
+    strcpy(this->div,s->div);
+    strcpy(this->rollno,s->rollno);
+}
+student::~student()
+{
+    cout<<"\nExiting....";
+     cout<<"\nTHANK  YOU.....\n";
+}
+void student::putdata()
+{
+cout<<"\nName : "<<name;
+cout<<"\nDate of Birth : "<<dob;
+cout<<"\nBlood Group : "<<blood;
+cout<<"\nClass : "<<Class;
+cout<<"\nDivision : "<<div;
+cout<<"\nRoll No : "<<rollno;
+}
+info::info()
+{
+	conno = new char[10];
+	drino = new char[10];
+	address=new char[50];
+	strcpy(address,"Address ");
+	strcpy(conno,"xxxxxxxxxx");
+	strcpy(drino,"xxxxxx");
+}
+void info::getdata(student *s)
+{
+	cout<<"\nFill the student information\n";
+	cout<<"Enter the Name : ";
+	cin>>s->name;
+	cout<<"Enter Date of birth (dd/mm/yyyy) : ";
+	cin>>s->dob;
+	cout<<"Enter Blood group : ";
+	cin>>s->blood;
+    cout<<"Class";
+    cin>>s->Class;
+    cout<<"Enter Division";
+    cin>>s->div;
+    cout<<"Enter Roll No";
+    cin>>s->rollno;
+	cout<<"Enter Contact number : ";
+	cin>>conno;
+	cout<<"Enter Driving license number : ";
+	cin>>drino;
+	cout<<"\nEnter the address in detail\n";
+	cin>>address;
+}
+void info::putdata(student *s)
+{
+	cout<<"\n\nName : "<<s->name;
+	cout<<"\nDate of birth : "<<s->dob;
+	cout<<"\nBlood group : "<<s->blood;
+    cout<<"\nClass : "<<s->Class;
+    cout<<"\nDivision : "<<s->div;
+    cout<<"\nRoll.No : "<<s->rollno;
+	cout<<"\nContact number : "<<conno;
+	cout<<"\nDriving license number : "<<drino;
+	cout<<"\nAddress : "<<address;
+	cout<<"\n";
+}
+int student::count=-2;
+int main()
+{
+	int n,i;
+	student s1;
+              student *st[100];
+               info in1,*in[100];
+	in1.putdata(&s1);
+              student s2(s1);
+	s2.putdata();
+	cout<<"\n How many objects you want to create ? : ";
+	cin>>n;
+	for(i=0;i<n;i++)
+	{
+	    in[i] = new info();
+	    st[i] = new student();
+    }
+    for(i=0;i<n;i++)
+    {
+	    in[i]->getdata(st[i]);
+    }
+	for(i=0;i<n;i++)
+    {
+	       in[i]->putdata(st[i]);
+    }
+	
+    student::showcount();
+    for(i=0;i<n;i++)
+	{
+	  delete(st[i]);
+	  delete(in[i]);
+	}
+	return 0;
+}

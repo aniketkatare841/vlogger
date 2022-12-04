@@ -1,0 +1,153 @@
+//Write C++ program to draw the line styles using DDA algorithm 
+//(solid, dotted, dashed, dash dot and thick). 
+//Inherit pixel class and Use Constructors.
+
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+using namespace std;
+class pixel
+{
+	int x1,y1,x2,y2,x,y,dx,dy,len;
+	public:
+    		void dda(int,int,int,int,int,int);
+};
+void pixel::dda(int x1,int y1,int x2,int y2,int col,int ch)
+{
+   int x,y,len;
+
+   dx=x2-x1;
+   dy=y2-y1;
+
+   if(dx>dy)
+   {
+      len=dx;
+   }
+   else
+   {
+      len=dy;
+   }
+
+   dx=(x2-x1)/len;
+   dy=(y2-y1)/len;
+
+   x=x1+dx;
+   y=y1+dy;
+   	
+   putpixel(x,y,col);
+   int i;
+	int count=4;
+   switch(ch)
+   {
+	case 1:
+	   i=1;
+	   while(i<=len)
+	   {
+	     x=x+dx;
+	     y=y+dy;
+	     putpixel(x,y,col);
+	     i=i+1;
+	   }
+	break;
+	case 2:
+	   i=1;
+//	   cout<<len;
+	   while(i<=len)
+	   {
+	     x=x+dx;
+	     x=x+2;
+	     y=y+dy;
+	     putpixel(x,y,col);
+	     i++;
+	   }
+	break;
+	case 3:
+	i=1;
+//	   cout<<len;
+	   while(i<=len)
+	   {
+	     x=x+dx;
+	     y=y+dy;
+	    
+	     putpixel(x,y,col);
+	     i++;
+	      if(i==count)
+	     {
+		x=x+3;
+	     putpixel(x,y,col);
+		count=count+7;
+             }
+		
+	   }
+	break;
+	case 4:
+	    i=1;
+//	   cout<<len;
+	   while(i<=len)
+	   {
+	     x=x+dx;
+	     y=y+dy;
+	    
+	     putpixel(x,y,col);
+	     i++;
+	      if(i==count)
+	     {
+		x=x+3;
+	     putpixel(x,y,col);
+		count=count+7;
+		x=x+3;
+		putpixel(x,y,col);
+             }
+		
+	   }
+	break;
+	case 5:
+	   i=1;
+	   while(i<=len)
+	   {
+	     x=x+dx;
+	     y=y+dy;
+	     putpixel(x,y,col);
+	     putpixel(x,y+1,col);
+	     i++;
+	   }
+	break;
+   }    
+}
+int main()
+{
+	pixel p;
+	
+	int gd=DETECT,gm,ch;
+    initgraph(&gd,&gm,NULL);
+	do{
+	cout<<"\n1.Normal Line\n2.Dotted Line\n3.Dash Line\n4.Dash dot dash Line\n5.Thick Line\nEnter your choice";
+	cin>>ch;
+	switch(ch)
+	{
+		case 1:
+			p.dda(100,100,500,100,1,1);
+		break;
+		case 2:
+			p.dda(100,130,500,100,2,2);
+		break;
+		case 3:
+			p.dda(100,160,500,100,3,3);
+		break;
+		case 4:
+			p.dda(100,190,500,100,4,4);
+		break;
+		case 5:
+			p.dda(100,210,500,100,5,5);
+		break;
+		case 6:
+		cout<<"invalid choice";
+		break;
+	}
+	}while(ch!=6);
+	
+	delay(10000);
+    closegraph();
+
+    return 0;
+}

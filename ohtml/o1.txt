@@ -1,0 +1,62 @@
+#include<iostream>
+using namespace std;
+class complex
+{	
+    private:
+int real;
+int imag;
+public:
+    void setvalue(int,int);
+    complex  operator *(complex &b);
+    complex  operator +(complex &d);
+    void display();
+    friend void operator <<(ostream &output,complex &s );	
+    friend void operator >>(istream &input,complex &q );
+};
+void operator <<(ostream &output,complex &s )
+{
+    output<<s.real<<"+"<<s.imag<<"i";
+}
+void operator >>(istream &input,complex &q )
+{
+    input>>q.real>>q.imag;
+}
+void complex::setvalue(int c,int d)
+{
+    real=c;
+    imag=d;	
+}
+complex complex::operator *(complex &b)
+    {
+    complex c7;
+    c7.real=real*b.real;
+    c7.imag=imag*b.imag;
+    return(c7);
+    }
+complex complex::operator +(complex &d)
+    {
+    complex c8;
+    c8.real=real+d.real;
+    c8.imag=imag+d.imag;
+    return(c8);
+    }
+void complex::display()
+{
+    cout<<real<<"*"<<imag<<"i"<<"\n";
+    cout<<real<<"+"<<imag<<"i"<<"\n";
+}
+    int main()
+    {
+    complex  c1,c2,c3,c4;
+    cout<<"enter first  object"<<"\n";
+    cin>>c3;
+    cout<<"object first is :\n"<<c3;
+    cout<<"\nenter second object";
+    cin>>c4;
+    cout<<"object second is:\n"<<c4;
+    c1=c3+c4;
+    c2=c3*c4;
+    cout<<"\naddition :"<<c1;
+    cout<<"\nmultiplication :"<<c2;
+    return 0;
+}
