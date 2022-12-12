@@ -1,92 +1,212 @@
-#include <graphics.h>
-#include<iostream.h>
-#include <math.h>
+/* Cohen Sutherland Line Clipping Algorithm */
+
+#include<iostream>
+#include<stdlib.h>
+#include<math.h>
+#include<graphics.h>
+#include<dos.h>
+
 using namespace std;
-void circlebres(float x1,float y1,float r)
+
+typedef struct coordinate
 {
-	float x,y,p;
-	x=0;
-	y=r;
-	p=3-(2*r); // initial decision parameter
-	while(x<=y)
-	{
-		putpixel(x1+x,y1+y,WHITE); /* drawing pixel in each octant*/
-		putpixel(x1-x,y1+y,WHITE);
-		putpixel(x1+x,y1-y,WHITE);
-		putpixel(x1-x,y1-y,WHITE);
-		putpixel(x1+y,y1+x,WHITE);
-		putpixel(x1+y,y1-x,WHITE);
-		putpixel(x1-y,y1+x,WHITE);
-		putpixel(x1-y,y1-x,WHITE);
+	int x,y;
+	char code[4];
+}PT;
+//Now, while declaring variables of this structure type,
+// we can write type_name in place of struct structure_name in the whole program.
+ 
+void drawwindow();
+void drawline(PT p1,PT p2);
 
-		x=x+1;
+PT setcode(PT p);
 
-		if(p<0)
-		{
-		   p=p+4*(x)+6;
-		}
-		else
-		{
-		   p=p+4*(x-y)+10;
-		   y=y-1;
-		}
-		delay(40);
-		}
-		}
-
-
-void drawline(int x1,int y1,int x2,int y2)
-{
-  int dx,dy,m,s;
-  float xi,yi,x,y;
-   dx = x2 - x1;
-    dy = y2 - y1;
-
-    if (abs(dx) > abs(dy))
-       s = abs(dx);
-    else
-       s = abs(dy);
-
-    xi = dx / (float) s;
-    yi = dy / (float) s;
-
-    x = x1;
-    y = y1;
-
-    putpixel(x1, y1, WHITE);
-
-    for (m = 0; m < s; m++)
-    {
-       putpixel(x, y, WHITE);
-       x += xi;
-       y += yi;
-
-    }
-delay(500);
-}
-
+int visibility(PT p1,PT p2);
+PT resetendpt(PT p1,PT p2);
+ 
 int main()
 {
-   int xc,yc,r;
-   cout<<" enter center coordinates : ";
-   cin>>xc>>yc;
-   cout<<"enter redius : ";
-   cin>>r;
-
-   int gd=DETECT,gm=DETECT,x1,y1,x2,y2;
-   initgraph(&gd,&gm,NULL);
-
-   circlebres(xc,yc,r);
-   double height,side;
-   side=r/0.577;
-   height=1.73*side;
-
-   drawline(xc-side,yc+r,xc+side,yc+r);
-   delay(300);
-   drawline(xc-side,yc+r,xc,yc+r-height);
-   drawline(xc,yc+r-height,xc+side,yc+r);
-   circlebres(xc,yc,height-r);
-
-delay(3000);
-   closegraph();
+	int gd=DETECT,v,gm;
+	PT p1,p2,p3,p4,ptemp;
+	
+	cout<<"\nEnter x1 and y1 of line \n";
+	cin>>p1.x>>p1.y;
+	cout<<"\nEnter x2 and y2 of line \n";
+	cin>>p2.x>>p2.y;
+	
+	initgraph(&gd,&gm,NULL);
+	drawwindow();
+	delay(500);
+	
+	drawline(p1,p2);
+	delay(10000);
+	cleardevice();
+	
+	delay(500);
+	p1=setcode(p1);
+	p2=setcode(p2);
+	
+	v=visibility(p1,p2);
+	delay(500);
+	
+	switch(v)
+	{
+	// Line completely inside the window
+	case 0: drawwindow();
+			delay(500);
+			drawline(p1,p2);
+			break;
+	// line which is completely outside
+	case 1:	drawwindow();
+			delay(500);
+			break;
+	// Line which is partially inside
+	case 2:	p3=resetendpt(p1,p2);
+			p4=resetendpt(p2,p1);
+			drawwindow();
+			delay(500);
+			drawline(p3,p4);
+			break;
+	}
+	
+	delay(5000);
+	closegraph();
 }
+ // drawing window by simple lines
+void drawwindow()
+{
+	rectangle(150,100,450,350);
+/*	line(150,100,450,100);
+	line(450,100,450,350);
+	line(450,350,150,350);
+	line(150,350,150,100);
+	*/
+}
+
+//  draw line by using simple line function 
+void drawline(PT p1,PT p2)
+{
+	line(p1.x,p1.y,p2.x,p2.y);
+}
+ 
+PT setcode(PT p)	//for setting the 4 bit code
+{
+	PT ptemp;
+	// A B R L
+	if(p.y<100)
+		ptemp.code[0]='1';	//Top boundary
+	else
+		ptemp.code[0]='0';
+	
+	if(p.y>350)
+		ptemp.code[1]='1';	// Below Bottom boundary
+	else
+		ptemp.code[1]='0';
+		
+	if(p.x>450)
+		ptemp.code[2]='1';	// point is after the Right boundary
+	else
+		ptemp.code[2]='0';
+		
+	if(p.x<150)
+		ptemp.code[3]='1';	//Left
+	else
+		ptemp.code[3]='0';
+	
+	ptemp.x=p.x;
+	ptemp.y=p.y;
+	
+	return(ptemp);
+}
+ 
+ 
+ /*
+ Check for visibility of line
+
+
+If region codes for endpoints are not zero and logical ANDing of them is also nonzero then line is invisible. Discard the line and move to step 9.
+If it does not satisfy 4.a & 4.b  then line is partially visible.
+*/
+int visibility(PT p1,PT p2)
+{
+	int i,flag=0;
+	
+	for(i=0;i<4;i++)
+	{
+
+		if((p1.code[i]!='0') || (p2.code[i]!='0'))
+			flag=1;
+	}
+//If region codes for both endpoints are zero then line is completely visible. Draw the line .	
+	if(flag==0)
+		return(0);
+	
+	for(i=0;i<4;i++)
+	{
+		if((p1.code[i]==p2.code[i]) && (p1.code[i]=='1'))
+			flag=0;
+	}
+	
+	if(flag==0)
+	{		return(1); }
+	
+	return(2);
+}
+ 
+PT resetendpt(PT p1,PT p2)
+{
+// Fisrt call of function with P1, P2
+// P1= 50,200      0001    X=150
+// P2 = 200,75     0000
+
+/// Second call of function with P2,P1
+/// P1=200,75      0000
+/// P2=50,200       0001
+	PT temp;
+	int x,y,i;
+	float m,k;
+	
+	if(p1.code[3]=='1')
+		x=150;
+	
+	if(p1.code[2]=='1')
+		x=450;
+	
+	if((p1.code[3]=='1') || (p1.code[2]=='1'))
+	{
+		m=(float)(p2.y-p1.y)/(p2.x-p1.x); 
+		// (75-200)/(200-50)
+		//-125/150
+		k=(p1.y+(m*(x-p1.x)));
+		//(200+((-125/150)*(150-50))
+		temp.y=k;
+		temp.x=x;
+		
+		for(i=0;i<4;i++)
+			temp.code[i]=p1.code[i];
+		// temp code 0001
+		if(temp.y<=350 && temp.y>=100)
+			return (temp);
+	}
+	
+	if(p1.code[0]=='1')
+		y=100;
+	
+	if(p1.code[1]=='1')
+		y=350;
+		
+	if((p1.code[0]=='1') || (p1.code[1]=='1'))
+	{// Calculation of slope
+		m=(float)(p2.y-p1.y)/(p2.x-p1.x);
+		// X axis intercept
+		k=(float)p1.x+(float)(y-p1.y)/m;
+		temp.x=k;
+		temp.y=y;
+		
+		for(i=0;i<4;i++)
+			temp.code[i]=p1.code[i];
+		
+		return(temp);
+	}
+	else
+		return(p1);
